@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Processar Contracheque em PDF</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px;
+			}
+			#outputTable {
+				margin-top: 20px;
+				border-collapse: collapse;
+				width: 100%;
+			}
+			#outputTable th,
+			#outputTable td {
+				border: 1px solid #ddd;
+				padding: 8px;
+			}
+			#outputTable th {
+				background-color: #f2f2f2;
+			}
+			button {
+				margin: 10px 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div style="display: flex; justify-content: space-between; align-items: center">
+			<h1>Carregar contracheque</h1>
+			<input type="file" id="pdfInput" accept="application/pdf" style="border: 2px solid teal; padding: 5px; width: 50%; border-radius: 5px" />
+		</div>
+
+		<div style="display: flex; justify-content: space-between; align-items: center">
+			<h2>Dados Tabulados</h2>
+			<button id="copyBtn" style="height: 30px; background-color: teal; color: white; border: none; border-radius: 5px">Copiar para área de transferência</button>
+		</div>
+		<table id="outputTable">
+			<thead>
+				<tr>
+					<th>Código</th>
+					<th>Descrição do Evento</th>
+					<th>Referência</th>
+					<th>Proventos</th>
+					<th>Descontos</th>
+				</tr>
+			</thead>
+			<tbody id="tableBody"></tbody>
+		</table>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+		<script src="script.js"></script>
+	</body>
+</html>
