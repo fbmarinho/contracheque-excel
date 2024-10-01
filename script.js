@@ -149,7 +149,8 @@ function copyToClipboard() {
 }
 
 function totais(tabela) {
-	var codigos = [21, 992, 993];
+	var codigosbonus = [21, 992, 993];
+	var codigosadiantamentos = [600, 610, 244];
 
 	var proventos = 0;
 	var descontos = 0;
@@ -158,15 +159,15 @@ function totais(tabela) {
 
 	tabela.forEach((row) => {
 		if (row.proventos) proventos += parseFloat(row.proventos);
-		if (row.descontos) descontos += parseFloat(row.descontos);
-		if (row.codigo == 600) {
-			dia10 = parseFloat(row.descontos);
+		if (row.descontos && !codigosadiantamentos.includes(row.codigo)) descontos += parseFloat(row.descontos);
+		if (codigosadiantamentos.includes(row.codigo)) {
+			dia10 += parseFloat(row.descontos);
 		}
-		if (codigos.includes(row.codigo)) {
+		if (codigosbonus.includes(row.codigo)) {
 			bonus += parseFloat(row.proventos);
 		}
 	});
-	descontos = descontos - dia10;
+	descontos = descontos;
 	var liquido = proventos - descontos;
 	var dia25 = liquido - dia10;
 	return { proventos, descontos, bonus, liquido, dia10, dia25 };
