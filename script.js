@@ -166,8 +166,8 @@ function totais(tabela) {
 			bonus += parseFloat(row.proventos);
 		}
 	});
-
-	var liquido = proventos - descontos + dia10;
+	descontos = descontos - dia10;
+	var liquido = proventos - descontos;
 	var dia25 = liquido - dia10;
 	return { proventos, descontos, bonus, liquido, dia10, dia25 };
 }
