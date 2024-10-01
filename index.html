@@ -9,17 +9,17 @@
 				font-family: Arial, sans-serif;
 				margin: 20px;
 			}
-			#outputTable {
+			table {
 				margin-top: 20px;
 				border-collapse: collapse;
 				width: 100%;
 			}
-			#outputTable th,
-			#outputTable td {
+			table th,
+			table td {
 				border: 1px solid #ddd;
 				padding: 8px;
 			}
-			#outputTable th {
+			table th {
 				background-color: #f2f2f2;
 			}
 			button {
@@ -48,6 +48,48 @@
 				</tr>
 			</thead>
 			<tbody id="tableBody"></tbody>
+		</table>
+		<h2>Totais</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>Item</th>
+					<th>Descrição do item</th>
+					<th>Total</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>Total de proventos</td>
+					<td id="proventos"></td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>Total de descontos</td>
+					<td id="descontos"></td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td>Salário Líquido</td>
+					<td id="liquido"></td>
+				</tr>
+				<tr>
+					<td>4</td>
+					<td>Total de Bônus</td>
+					<td id="bonus"></td>
+				</tr>
+				<tr>
+					<td>5</td>
+					<td>Valor dia 10</td>
+					<td id="dia10"></td>
+				</tr>
+				<tr>
+					<td>6</td>
+					<td>Valor dia 25</td>
+					<td id="dia25"></td>
+				</tr>
+			</tbody>
 		</table>
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>

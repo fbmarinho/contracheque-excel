@@ -18,7 +18,7 @@ async function loadPDF(file) {
 
 			for (let p = 1; p <= numPages; p++) {
 				const page = await pdf.getPage(p);
-				const textContent = (await page.getTextContent()).items.filter((o) => o.str.trim() != "");
+				const textContent = (await page.getTextContent()).items.filter((o) => o.str != " ").filter((o) => o.str != "");
 
 				const contrachequevalido = textContent.findIndex((o) => o.str.trim() == "DISCRIMINAÇÃO DO PAGAMENTO NA COMPETÊNCIA");
 
@@ -32,15 +32,18 @@ async function loadPDF(file) {
 
 				const startIndex = textContent.findIndex((o) => o.str.trim() == startText) - 1;
 				const endIndex = textContent.findIndex((o) => endText.includes(o.str.trim())) - 2;
-				console.log("conteudo: ", textContent, startIndex, endIndex);
+
+				const tipo = textContent.findIndex((o) => o.str.trim() == "PAGAMENTO NO MÊS") > 0;
+
+				console.log("conteudo: ", tipo, textContent, startIndex, endIndex);
 
 				const discountCodes = [1113, 1116, 600, 629, 630, 760, 762, 947, 749, 1200, 610, 756, 244, 764, 774, 680];
 
 				for (var i = startIndex; i <= endIndex; i = i + 4) {
 					const codigo = parseInt(textContent[i].str.trim());
 					const descricao = textContent[i + 1].str.trim();
-					const referencia = parseFloat(textContent[i + 3].str.trim());
-					const moeda = parseFloat(textContent[i + 2].str.trim().replace(".", ""));
+					const referencia = parseFloat(textContent[i + (tipo ? 3 : 2)].str.trim());
+					const moeda = parseFloat(textContent[i + (tipo ? 2 : 3)].str.trim().replace(".", ""));
 					const proventos = discountCodes.includes(codigo) ? null : moeda;
 					const descontos = discountCodes.includes(codigo) ? moeda : null;
 					table.push({ codigo, descricao, referencia, proventos, descontos });
@@ -80,6 +83,26 @@ function displayData(data) {
 	});
 
 	console.log("Dados exibidos na tabela."); // Log final após exibir os dados
+}
+
+function displayTotais(totais) {
+	const proventos = document.getElementById("proventos");
+	proventos.innerText = moeda(totais.proventos);
+
+	const descontos = document.getElementById("descontos");
+	descontos.innerText = moeda(totais.descontos);
+
+	const liquido = document.getElementById("liquido");
+	liquido.innerText = moeda(totais.liquido);
+
+	const bonus = document.getElementById("bonus");
+	bonus.innerText = moeda(totais.bonus);
+
+	const dia10 = document.getElementById("dia10");
+	dia10.innerText = moeda(totais.dia10);
+
+	const dia25 = document.getElementById("dia25");
+	dia25.innerText = moeda(totais.dia25);
 }
 
 // Função para copiar os dados da tabela para o clipboard
@@ -125,6 +148,34 @@ function copyToClipboard() {
 	alert("Tabela copiada para a área de transferência! Cole no Excel.");
 }
 
+function totais(tabela) {
+	var codigos = [21, 992, 993];
+
+	var proventos = 0;
+	var descontos = 0;
+	var bonus = 0;
+	var dia10 = 0;
+
+	tabela.forEach((row) => {
+		if (row.proventos) proventos += parseFloat(row.proventos);
+		if (row.descontos) descontos += parseFloat(row.descontos);
+		if (row.codigo == 600) {
+			dia10 = parseFloat(row.descontos);
+		}
+		if (codigos.includes(row.codigo)) {
+			bonus += parseFloat(row.proventos);
+		}
+	});
+
+	var liquido = proventos - descontos;
+	var dia25 = liquido - dia10;
+	return { proventos, descontos, bonus, liquido, dia10, dia25 };
+}
+
+function moeda(valor) {
+	return valor.toLocaleString("pt-br", { style: "currency", currency: "BRL" });
+}
+
 // Event listeners
 document.getElementById("pdfInput").addEventListener("change", async (e) => {
 	const input = e.currentTarget;
@@ -132,6 +183,7 @@ document.getElementById("pdfInput").addEventListener("change", async (e) => {
 		console.log("Processando PDF:", input.value);
 		const data = await loadPDF(input.files[0]);
 		displayData(data);
+		displayTotais(totais(data));
 	}
 });
 
