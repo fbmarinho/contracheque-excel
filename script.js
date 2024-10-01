@@ -18,7 +18,7 @@ async function loadPDF(file) {
 
 			for (let p = 1; p <= numPages; p++) {
 				const page = await pdf.getPage(p);
-				const textContent = (await page.getTextContent()).items.filter((o) => o.str != null);
+				const textContent = (await page.getTextContent()).items.filter((o) => o.str.trim() != "");
 
 				const contrachequevalido = textContent.findIndex((o) => o.str.trim() == "DISCRIMINAÇÃO DO PAGAMENTO NA COMPETÊNCIA");
 
@@ -27,11 +27,12 @@ async function loadPDF(file) {
 					return null;
 				}
 
-				const endText = "Margem Consignada para Emprestimo";
+				const startText = "Salario Base";
+				const endText = ["Margem Consignada para Emprestimo", "Valor Líquido"];
 
-				const startIndex = 70;
-				const endIndex = textContent.findIndex((o) => o.str.trim() == endText) - 2;
-				//console.log("conteudo: ", textContent, startIndex, endIndex);
+				const startIndex = textContent.findIndex((o) => o.str.trim() == startText) - 1;
+				const endIndex = textContent.findIndex((o) => endText.includes(o.str.trim())) - 2;
+				console.log("conteudo: ", textContent, startIndex, endIndex);
 
 				const discountCodes = [1113, 1116, 600, 629, 630, 760, 762, 947, 749, 1200, 610, 756, 244, 764, 774, 680];
 
